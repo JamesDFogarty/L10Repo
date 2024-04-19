@@ -20,45 +20,44 @@ return newTrie;
 }
 
 // Inserts the word to the trie structure
+
+
 void insert(struct Trie *pTrie, char *word)
 {
-// Down to the end, insert the word.
-if (*(word+1)=='\0') {
-pTrie->count++;
-return;
+int i, len = strlen(word); //get strlen of word
+for (i=0;i<len;i++) { //traverse node structure creating nodes when needed
+	if (pTrie->next[word[i]-'a'] == NULL) pTrie->next[word[i]-'a'] = createTrie();
+	pTrie=pTrie->next[word[i]-'a'];
 }
-// See if the next place to go exists, if not, create it.
-int nextIndex = *word - 'a';
-if (pTrie->next[nextIndex] == NULL)
-pTrie->next[nextIndex] = createTrie();
-insert(pTrie->next[nextIndex], (word+1));
+pTrie->count++; //increment count at last node
 }
+
 
 // computes the number of occurances of the word
 int numberOfOccurances(struct Trie *pTrie, char *word)
 {
-printf("%s \n",word);
-printf("%c%c%c \n",*(word+1),*(word+2),*(word+3));
-int rval = 0;
-if (pTrie->next[*word-'a']!=NULL) {
-    
-    if ((*((word)+1))=='\0') {
-		rval=pTrie->count;
-		printf("adding %d to the count for %c \n",pTrie->count,word+1);
-		}
-    else rval=numberOfOccurances(pTrie->next[*word-'a'],(word+1));
-}
-return rval;
+int i, len = strlen(word); //get length
+
+ for (i=0; i<len; i++) {
+
+ if (pTrie->next[word[i]-'a'] == NULL) return 0; //if you hit a null, return 0
+
+ 
+ pTrie = pTrie->next[word[i]-'a']; //traverse
+ }
+
+ return pTrie->count; //if you reached the end successfully, return its count
+
 }
 
 // deallocate the trie structure
 struct Trie *deallocateTrie(struct Trie *pTrie)
 {
 for (int i=0;i<26;i++) {
-    if (pTrie->next[i]!=NULL) deallocateTrie(pTrie->next[i]);
+    if (pTrie->next[i]!=NULL) deallocateTrie(pTrie->next[i]); //deallocate trie array recursively
 }
 pTrie=NULL;
-free(pTrie);
+free(pTrie); //deallocate trie
 }
 
 // Initializes a trie structure
